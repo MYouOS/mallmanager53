@@ -26,30 +26,48 @@
         },
         methods: {
             // 登录请求
-            handleLogin() {
-                this.$http.post('login', this.formdata).then((res) => {
-                    // console.log(res)
-                    // 对象解构赋值
-                    const {
-                        data,
-                        meta: { msg, status }
-                    } = res.data
+            async handleLogin() {
+                // ES7 async+wait
+                // 1.找到异步操作有结果的代码，前面加await 同时接口异步操作的结果res
+                // 2.找到距离异步操作有结果的代码最近的方法，前面加async
+                const res = await this.$http.post('login', this.formdata)
+                const {
+                    data,
+                    meta: { msg, status }
+                } = res.data
 
 
-                    if (status === 200) {
-                        // 登录成功
-                        // 1.提示成功
-                        this.$message.success(msg);
-                        // 2.跳转home
-                        this.$router.push({ name: 'home' })
+                if (status === 200) {
+                    this.$message.success(msg);
+                    this.$router.push({ name: 'home' })
 
-                    } else {
-                        // 登录失败
-                        // 1.提示失败
-                        this.$message.error(msg);
-                    }
+                } else {
+                    this.$message.error(msg);
+                }
 
-                })
+                // this.$http.post('login', this.formdata).then((res) => {
+                //     // console.log(res)
+                //     // 对象解构赋值
+                //     const {
+                //         data,
+                //         meta: { msg, status }
+                //     } = res.data
+
+
+                //     if (status === 200) {
+                //         // 登录成功
+                //         // 1.提示成功
+                //         this.$message.success(msg);
+                //         // 2.跳转home
+                //         this.$router.push({ name: 'home' })
+
+                //     } else {
+                //         // 登录失败
+                //         // 1.提示失败
+                //         this.$message.error(msg);
+                //     }
+
+                // })
             }
         },
     }
