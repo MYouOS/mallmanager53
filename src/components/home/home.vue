@@ -99,7 +99,16 @@
 
 <script>
     export default {
-        name: "HomeName"
+        name: "HomeName",
+        beforeCreate() {
+            // 获取token
+            const token = localStorage.getItem('token')
+            // 有：继续渲染组件
+            // 无：退回登录页
+            if (!token) {
+                this.$router.push({ name: 'login' })
+            }
+        },
     }
 </script>
 
