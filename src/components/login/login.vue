@@ -39,6 +39,8 @@
 
                 if (status === 200) {
                     this.$message.success(msg);
+                    // 保存token
+                    localStorage.setItem('token', data.token)
                     this.$router.push({ name: 'home' })
 
                 } else {
