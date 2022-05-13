@@ -43,13 +43,16 @@
             </el-table-column>
             <el-table-column label="用户状态">
                 <template slot-scope="scope">
-                    <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949">
+                    <el-switch @change="changeMgState(scope.row)" v-model="scope.row.mg_state" active-color="#13ce66"
+                        inactive-color="#ff4949">
                     </el-switch>
                 </template>
             </el-table-column>
             <el-table-column prop="address" label="操作">
                 <template slot-scope="scope">
-                    <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
+                    <el-button @click="showEditUserDia(scope.row)" size="mini" plain type="primary" icon="el-icon-edit"
+                        circle>
+                    </el-button>
                     <el-button @click="showDelUserMsgBox(scope.row.id)" size="mini" plain type="danger"
                         icon="el-icon-delete" circle></el-button>
                     <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
@@ -85,6 +88,25 @@
                 <el-button type="primary" @click="addUser()">确 定</el-button>
             </div>
         </el-dialog>
+        <!-- 编辑用户 -->
+        <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
+            <el-form :model="form">
+                <el-form-item label="用户名" label-width="100px">
+                    <el-input disabled v-model="form.username" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="邮 箱" label-width="100px">
+                    <el-input v-model="form.email" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="电 话" label-width="100px">
+                    <el-input v-model="form.mobile" autocomplete="off"></el-input>
+                </el-form-item>
+
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+                <el-button type="primary" @click="editUser()">确 定</el-button>
+            </div>
+        </el-dialog>
     </el-card>
 </template>
 
@@ -102,6 +124,7 @@
                 pagesize: 2,
                 // 添加对话框的属性
                 dialogFormVisibleadd: false,
+                dialogFormVisibleEdit: false,
                 // 添加用户的表单数据
                 form: {
                     // username用户名称不能为空
@@ -130,6 +153,7 @@
             },
             // 添加用户 - 显示对话框
             showAddUserDia() {
+                this.form = {}
                 this.dialogFormVisibleadd = true
             },
             // 添加用户 - 发送请求
@@ -189,7 +213,6 @@
                     });
                 });
             },
-            // 删除用户 - 打开消息盒子
             // 分页相关方法
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`)
@@ -200,6 +223,33 @@
                 console.log(`当前页: ${val}`)
                 this.pagenum = val
                 this.getUserList()
+            },
+
+            // 编辑用户 - 显示对话框
+            showEditUserDia(user) {
+                // 获取用户数据
+                // console.log(user);
+                this.form = user
+                this.dialogFormVisibleEdit = true
+            },
+            // 编辑用户 - 发送请求
+            async editUser() {
+                this.dialogFormVisibleEdit = false
+                const res = await this.$http.put(`users/${this.form.id}`, this.form)
+                // console.log(res)
+                // 1.关闭对话框
+                this.dialogFormVisibleEdit = false
+                // 2.更新视图
+                this.getUserList()
+                // 3.更新成功提示
+                this.$message.success(res.data.meta.msg)
+            },
+
+            // 修改用户状态
+            async changeMgState(user) {
+                // 发送请求 users/:uId/state/:type
+                const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`)
+                console.log(res);
             },
 
             // 获取用户列表的请求
