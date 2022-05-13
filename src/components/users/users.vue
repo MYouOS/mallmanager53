@@ -54,7 +54,11 @@
                 </template>
             </el-table-column>
         </el-table>
+
         <!-- 4.分页 -->
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagenum"
+            :page-sizes="[2, 4, 6, 8]" :page-size="2" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        </el-pagination>
     </el-card>
 </template>
 
@@ -76,6 +80,18 @@
             this.getUserList()
         },
         methods: {
+            // 分页相关方法
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`)
+                this.pagesize = val
+                this.getUserList()
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`)
+                this.pagenum = val
+                this.getUserList()
+            },
+
             // 获取用户列表的请求
             async getUserList() {
                 // query 查询参数 可以为空
@@ -88,7 +104,7 @@
                 this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
 
                 const res = await this.$http.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
-                console.log(res)
+                // console.log(res)
                 const {
                     meta: { status, msg },
                     data: { users, total }
