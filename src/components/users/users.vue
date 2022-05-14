@@ -308,6 +308,7 @@
                 console.log(res)
                 // 关闭对话框
                 this.dialogFormVisibleRol = false
+                this.$message.success(res.data.meta.msg)
             },
 
             // 获取用户列表的请求
