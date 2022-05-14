@@ -83,7 +83,7 @@
                     <!-- 5 -->
                     <el-submenu index="5">
                         <template slot="title">
-                            <i class="el-icon-locastion"></i>
+                            <i class="el-icon-location"></i>
                             <span>数据统计</span>
                         </template>
                         <el-menu-item index="1-1">

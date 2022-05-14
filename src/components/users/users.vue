@@ -55,7 +55,8 @@
                     </el-button>
                     <el-button @click="showDelUserMsgBox(scope.row.id)" size="mini" plain type="danger"
                         icon="el-icon-delete" circle></el-button>
-                    <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
+                    <el-button @click="showSetUserRoleDia(scope.row)" size="mini" plain type="success"
+                        icon="el-icon-check" circle></el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -107,6 +108,26 @@
                 <el-button type="primary" @click="editUser()">确 定</el-button>
             </div>
         </el-dialog>
+        <!-- 分配角色 -->
+        <el-dialog title="分配角色" :visible.sync="dialogFormVisibleRol">
+            <el-form :model="form">
+                <el-form-item label="用户名" label-width="100px">
+                    {{currUsername}}
+                </el-form-item>
+                <el-form-item label="角 色" label-width="100px">
+                    <!-- 如果外层select绑定的数据的值 和 option的value一样 就会显示该option的label值 -->
+                    <el-select v-model="currRoleId">
+                        <el-option label="请选择" :value="-1"></el-option>
+                        <el-option v-for="(item, i) in roles" :key="i" :label="item.roleName" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisibleRol = false">取 消</el-button>
+                <el-button type="primary" @click="setRole()">确 定</el-button>
+            </div>
+        </el-dialog>
     </el-card>
 </template>
 
@@ -125,6 +146,7 @@
                 // 添加对话框的属性
                 dialogFormVisibleadd: false,
                 dialogFormVisibleEdit: false,
+                dialogFormVisibleRol: false,
                 // 添加用户的表单数据
                 form: {
                     // username用户名称不能为空
@@ -135,7 +157,13 @@
                     password: '',
                     email: '',
                     mobile: ''
-                }
+                },
+                // 分配角色
+                currRoleId: -1,
+                currUserId: -1,
+                currUsername: '',
+                // 保存所有的角色
+                roles: []
             }
         },
         created() {
@@ -249,7 +277,37 @@
             async changeMgState(user) {
                 // 发送请求 users/:uId/state/:type
                 const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`)
-                console.log(res);
+                // console.log(res);
+            },
+
+            // 分配角色 - 显示对话框
+            async showSetUserRoleDia(user) {
+                this.currUsername = user.username
+                this.dialogFormVisibleRol = true
+
+                // 给currUserId赋值
+                this.currUserId = user.id
+
+                // 获取所有的角色
+                const res1 = await this.$http.get(`roles`)
+                // console.log(res1)
+                this.roles = res1.data.data
+                // 获取当前用户角色id - rid
+                const res = await this.$http.get(`users/${user.id}`)
+                // console.log(res)
+                this.currRoleId = res.data.data.rid
+            },
+            // 分配角色 - 发送请求
+            async setRole() {
+                // users/:id/role
+                // :id 要修改的用户id值
+                // 请求体中rid修改的新值角色id
+                const res = await this.$http.put(`users/${this.currUserId}/role`, {
+                    rid: this.currRoleId
+                })
+                console.log(res)
+                // 关闭对话框
+                this.dialogFormVisibleRol = false
             },
 
             // 获取用户列表的请求
