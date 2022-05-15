@@ -12,7 +12,7 @@
 
         <!-- 2.表格 -->
         <el-table :data="rightlist" border style="width: 100%" height="400px">
-            <el-table-column type="index" label="#" width="180">
+            <el-table-column type="index" label="#" width="60">
             </el-table-column>
             <el-table-column prop="authName" label="权限名称" width="180">
             </el-table-column>
@@ -47,7 +47,7 @@
 
                 // 除了登录之外的所有请求，都需要设置头部
                 const res = await this.$http.get(`rights/list`)
-                console.log(res)
+                // console.log(res)
                 this.rightlist = res.data.data
             }
         },

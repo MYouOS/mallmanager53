@@ -9,8 +9,8 @@ MyHttpServer.install = function (Vue) {
     // 添加请求拦截器
     // 在请求发起之前会自动来到下面的回调函数
     axios.interceptors.request.use(function (config) {
-        console.log("拦截器被触发");
-        console.log(config);
+        // console.log("拦截器被触发");
+        // console.log(config);
         if (config.url !== 'login') {
             // 需要授权的 API ，必须在请求头中使用 Authorization 字段提供 token 令牌
             // 设置请求头
