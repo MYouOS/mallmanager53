@@ -178,7 +178,7 @@
                 // arr=arr1+arr2 ES6 展开运算符 ...数组或对象
                 let arr = [...arr1, ...arr2]
                 const res = await this.$http.post(`roles/${this.currRoleId}/rights`, { rids: arr.join(',') })
-                console.log(res)
+                // console.log(res)
 
                 // 更新视图
                 this.getRolelist()
